@@ -26,26 +26,43 @@ class GameOfLife:
             for j in range(y - 1, y + 2):
                 if i != x and j != y:
                     if 0 <= i < self.board_size and 0 <= j < self.board_size:
-                        count += 1
+                        if self.board[j][i]:
+                            count += 1
         return count
 
     def activate(self, points: list):
         for point in points:
             x, y = point
             self.board[y][x] = True
-
+    def turn_off(self, point):
+        x,y = point
+        self.board[y][x] = False
     def __copy__(self):
         return GameOfLife.from_list(self.board)
+
+    def is_active(self, point):
+        col, row = point
+        return self.board[row][col]
 
     def turn(self):
         new_board = copy_two_dim(self.board)
         for y, row in enumerate(self.board):
             for x, element in enumerate(row):
-                neigh = self.active_neighbours(y, x)
-                if neigh != 2 and neigh != 3:
-                    new_board[y][x] = False
-        return new_board
-
+                neigh = self.active_neighbours(x, y)
+                new_board[y][x] = (neigh == 2 or neigh == 3)
+        self.board = new_board
+    @property
+    def empty(self):
+        to_return = False
+        for i in self.board:
+            for element in i:
+                to_return |= element
+        return not to_return
     @property
     def size(self):
         return self.board_size
+    def run(self):
+        while not self.empty:
+            print()
+            self.turn()
+            print(self)
