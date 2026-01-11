@@ -24,7 +24,7 @@ class GameOfLife:
         count = 0
         for i in range(x - 1, x + 2):
             for j in range(y - 1, y + 2):
-                if i != x and j != y:
+                if i != x or j != y:
                     if 0 <= i < self.board_size and 0 <= j < self.board_size:
                         if self.board[j][i]:
                             count += 1
@@ -49,7 +49,10 @@ class GameOfLife:
         for y, row in enumerate(self.board):
             for x, element in enumerate(row):
                 neigh = self.active_neighbours(x, y)
-                new_board[y][x] = (neigh == 2 or neigh == 3)
+                if element:
+                    new_board[y][x] = (neigh == 2 or neigh == 3)
+                else:
+                    new_board[y][x] = (neigh == 3)
         self.board = new_board
     @property
     def empty(self):

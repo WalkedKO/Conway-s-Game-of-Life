@@ -9,7 +9,6 @@ class Cell(tk.Button):
         self.active = False
         super().__init__(master, width=3,height=1,bg=self.default_color, command= lambda:self.onclick())
     def onclick(self):
-        print("clicked")
         if self.active:
             self.game.turn_off((self.col, self.row))
             self.active = False
