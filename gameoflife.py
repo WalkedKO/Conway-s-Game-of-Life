@@ -3,9 +3,10 @@ from networkx.classes import neighbors
 def copy_two_dim(board):
     return [[i for i in j] for j in board]
 class GameOfLife:
-    def __init__(self, board_size):
-        self.board = [[False for i in range(board_size)] for j in range(board_size)]
-        self.board_size = board_size
+    def __init__(self, board_size_x, board_size_y):
+        self.board = [[False for i in range(board_size_x)] for j in range(board_size_y)]
+        self.board_size_x = board_size_x
+        self.board_size_y = board_size_y
 
     @classmethod
     def from_list(cls, board):
@@ -25,24 +26,18 @@ class GameOfLife:
         for i in range(x - 1, x + 2):
             for j in range(y - 1, y + 2):
                 if i != x or j != y:
-                    if 0 <= i < self.board_size and 0 <= j < self.board_size:
+                    if 0 <= i < self.board_size_x and 0 <= j < self.board_size_y:
                         if self.board[j][i]:
                             count += 1
         return count
 
-    def activate(self, points: list):
-        for point in points:
-            x, y = point
-            self.board[y][x] = True
-    def turn_off(self, point):
-        x,y = point
+    def turn_off(self, x, y):
         self.board[y][x] = False
     def __copy__(self):
         return GameOfLife.from_list(self.board)
 
-    def is_active(self, point):
-        col, row = point
-        return self.board[row][col]
+    def is_active(self, x, y):
+        return self.board[y][x]
 
     def turn(self):
         new_board = copy_two_dim(self.board)
@@ -63,9 +58,16 @@ class GameOfLife:
         return not to_return
     @property
     def size(self):
-        return self.board_size
+        return self.board_size_x, self.board_size_y
     def run(self):
         while not self.empty:
             print()
             self.turn()
             print(self)
+    def click_cell(self, x, y):
+        self.board[y][x] = not self.board[y][x]
+
+    def reset(self):
+        for y, row in enumerate(self.board):
+            for x, col in enumerate(row):
+                self.board[y][x] = False
