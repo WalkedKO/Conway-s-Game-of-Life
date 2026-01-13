@@ -1,15 +1,31 @@
 from networkx.classes import neighbors
 
 def copy_two_dim(board):
+    """
+    This methods copies 2D list
+    :param list[list] board: the 2D list
+    :return: copy of the 2D list
+    """
     return [[i for i in j] for j in board]
 class GameOfLife:
     def __init__(self, board_size_x, board_size_y):
+        """
+        Main logic behind the game of life class. Contains a 2D list of boolean which represent cells.
+        :param board_size_x: number of cells in horizontal
+        :param board_size_y: number of cells in vertical
+        """
         self.board = [[False for i in range(board_size_x)] for j in range(board_size_y)]
         self.board_size_x = board_size_x
         self.board_size_y = board_size_y
 
     @classmethod
     def from_list(cls, board):
+        """
+        Copying constructor.
+        :param list[list[boolean]] board: 2D list of booleans
+        :return: A new object of the GameOfLife class
+        :rtype: GameOfLife
+        """
         new = cls(len(board))
         new.board = copy_two_dim(board)
         return new
@@ -22,6 +38,13 @@ class GameOfLife:
         return str(self.board)
 
     def active_neighbours(self, x, y):
+        """
+        Returns number of activated neighbours of a cell of coordinates x and y
+        :param int x: x coordinate of the cell
+        :param int y: y coordinate of the cell
+        :return: number of neighbours
+        :rtype: int
+        """
         count = 0
         for i in range(x - 1, x + 2):
             for j in range(y - 1, y + 2):
@@ -32,14 +55,29 @@ class GameOfLife:
         return count
 
     def turn_off(self, x, y):
+        """
+        Kills a cell
+        :param x: x coordinate of the cell
+        :param y: y coordinate of the cell
+        """
         self.board[y][x] = False
     def __copy__(self):
         return GameOfLife.from_list(self.board)
 
     def is_active(self, x, y):
+        """
+        Tells if a cell is active or not
+        :param x: x coordinate of the cell
+        :param y: y coordinate of the cell
+        :return: If the cell is active
+        :rtype: boolean
+        """
         return self.board[y][x]
 
     def turn(self):
+        """
+        A single turn in the game of life.
+        """
         new_board = copy_two_dim(self.board)
         for y, row in enumerate(self.board):
             for x, element in enumerate(row):
@@ -51,23 +89,44 @@ class GameOfLife:
         self.board = new_board
     @property
     def empty(self):
-        to_return = False
+        """
+        Tells if the board is empty, which means no cell is active.
+        :return: If the board is empty
+        :rtype: boolean
+        """
         for i in self.board:
             for element in i:
-                to_return |= element
-        return not to_return
+                if element:
+                    return False
+        return True
     @property
     def size(self):
+        """
+        Size of the board in horizontal and vertical
+        :return: horizontal size, vertical size
+        :rtype: tuple[int]
+        """
         return self.board_size_x, self.board_size_y
     def run(self):
+        """
+        Used for testing without GUI. Runs and prints every turn till the board is empty, which means there are no active cells
+        """
         while not self.empty:
             print()
             self.turn()
             print(self)
     def click_cell(self, x, y):
+        """
+        Method which is called when a cell is clicked
+        :param x: x coordinate of the cell
+        :param y: y coordinate of the cell
+        """
         self.board[y][x] = not self.board[y][x]
 
     def reset(self):
+        """
+        Resets the game to the initial state
+        """
         for y, row in enumerate(self.board):
             for x, col in enumerate(row):
                 self.board[y][x] = False
