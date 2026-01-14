@@ -77,8 +77,11 @@ class GameOfLife:
     def turn(self):
         """
         A single turn in the game of life.
+        :return: list of cells that changed
+        :rtype: list[tuple[int,int]]
         """
         new_board = copy_two_dim(self.board)
+        to_return = []
         for y, row in enumerate(self.board):
             for x, element in enumerate(row):
                 neigh = self.active_neighbours(x, y)
@@ -86,7 +89,10 @@ class GameOfLife:
                     new_board[y][x] = (neigh == 2 or neigh == 3)
                 else:
                     new_board[y][x] = (neigh == 3)
+                if new_board[y][x] != self.board[y][x]:
+                    to_return.append((x,y))
         self.board = new_board
+        return to_return
     @property
     def empty(self):
         """

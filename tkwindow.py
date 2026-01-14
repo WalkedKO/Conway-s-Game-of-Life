@@ -1,5 +1,4 @@
 from gameoflife import GameOfLife
-from tkobj import Cell
 import tkinter as tk
 import threading
 from time import sleep
@@ -17,7 +16,6 @@ class WindowWrapper:
         self.root = tk.Tk()
         self.root.title("Game Of Life")
         self.cell_size = cell_size
-        self.cells = []
         # canvas size
         self.width = width_cells * self.cell_size
         self.height = height_cells * self.cell_size
@@ -46,23 +44,20 @@ class WindowWrapper:
         self.resetButton.grid(row=0,column=3)
         # prepares the board
         for y in range(self.height_cells):
-            row = []
             for x in range(self.width_cells):
-                new_obj = Cell(self.game_map, y, x, self.game)
-                row.append(new_obj)
                 self.color_cell(x, y, "black")
-            self.cells.append(row)
 
     def turn(self):
         """
         One single iteration of the game
         """
-        self.game.turn()
-        threads = []
-        for row in self.cells:
-            new_thread = threading.Thread(target=self.paint_row, kwargs={"row":row})
-            new_thread.run()
-            threads.append(new_thread)
+        to_update = self.game.turn()
+        for cell in to_update:
+            x, y = cell
+            if self.game.is_active(x, y):
+                self.color_cell(x, y, "white")
+            else:
+                self.color_cell(x, y, "black")
     def run_game(self):
         """
         Run the game with 1.5 second breaks between iterations
@@ -111,15 +106,11 @@ class WindowWrapper:
         """
         x = int(event.x / self.cell_size)
         y = int(event.y / self.cell_size)
-        clicked = self.cells[y][x]
-        clicked.onclick()
         self.game.click_cell(x, y)
-        if clicked.is_active:
+        if self.game.is_active(x,y):
             self.color_cell(x, y, "white")
-            clicked.color = "white"
         else:
             self.color_cell(x, y, "black")
-            clicked.color = "black"
 
     def reset(self):
         """
@@ -129,21 +120,4 @@ class WindowWrapper:
         for y in range(self.height_cells):
             for x in range(self.width_cells):
                 self.color_cell(x, y, "black")
-                self.cells[y][x].active = False
-    def paint_row(self, row):
-        """
-        Updates the row of the cells on the GUI by the row in the game logic.
-        So it checks which cells in the row are active in the game class and it colors it to proper color
-        :param list row: row of the cells
-        """
-        for cell in row:
-            x = cell.x
-            y = cell.y
-            cell.active = self.game.is_active(x, y)
-            if cell.active and cell.color == "black":
-                self.color_cell(x, y, "white")
-                cell.color = "white"
-            elif not cell.active and cell.color == "white":
-                self.color_cell(x, y, "black")
-                cell.color = "black"
 
