@@ -99,7 +99,7 @@ class WindowWrapper:
 
     def create_cell(self, x, y, color):
         """
-        Creates a cell on the board
+        Creates a cell on the board on the coordinates x and y
         :param int x: x coordinate of the cell
         :param int y: y coordinate of the cell
         :param str color: color of the cell
@@ -143,6 +143,9 @@ class WindowWrapper:
                 self.color_cell(x, y, "black")
 
     def random(self):
+        """
+        Makes a random board state.
+        """
         self.reset()
         to_color = self.game.random(self.chance)
         for x, y in to_color:

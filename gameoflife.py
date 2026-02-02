@@ -136,6 +136,11 @@ class GameOfLife:
             for x, col in enumerate(row):
                 self.board[y][x] = False
     def random(self, chance):
+        """
+        Makes a random board state.
+        :param chance: percent of chance that a cell will be set alive
+        :return: list of pairs (x, y) of cells' coordinates which were set alive
+        """
         to_color = []
         for y, row in enumerate(self.board):
             for x, cell in enumerate(row):
