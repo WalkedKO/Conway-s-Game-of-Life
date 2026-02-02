@@ -25,8 +25,7 @@ class WindowWrapper:
 
 
         self.game = GameOfLife(self.width_cells, self.height_cells)
-        self.game_loop = threading.Thread(target=self.run_game)
-        self.game_loop.start()
+        self.game_loop = tk.Frame()
 
         self.game_map = tk.Canvas(width=self.width, height=self.height, bg="gray")
         self.game_map.bind("<1>", self.on_mouse_down)
@@ -34,17 +33,23 @@ class WindowWrapper:
         # buttons
         self.buttons = tk.Frame(self.root)
         self.buttons.grid(row=1, column=0)
+        self.timeBox = tk.Frame(self.root)
+        self.timeBox.grid(row=2, column=0)
         self.startButton = tk.Button(self.buttons, text="Start", command=self.run_start)
         self.stopButton = tk.Button(self.buttons, text="Stop", command=self.run_stop)
         self.nextButton = tk.Button(self.buttons, text="Next", command=self.turn)
         self.resetButton = tk.Button(self.buttons, text="Reset", command=self.reset)
         self.randomButton = tk.Button(self.buttons, text="Random", command=self.random)
+        self.info = tk.Label(self.timeBox, text='Enter sleep time in milliseconds:')
+        self.timeEntry = tk.Entry(self.timeBox, width=4)
 
         self.startButton.grid(row=0, column=0)
         self.stopButton.grid(row=0, column=1)
         self.nextButton.grid(row=0, column=2)
         self.resetButton.grid(row=0,column=3)
         self.randomButton.grid(row=0,column=4)
+        self.info.grid(row=0, column=0)
+        self.timeEntry.grid(row=0,column=1)
 
         # percent of chance of coloring a cell while randomizing
         self.chance = 10
@@ -69,27 +74,22 @@ class WindowWrapper:
                 self.color_cell(x, y, "white")
             else:
                 self.color_cell(x, y, "black")
-    def run_game(self):
-        """
-        Run the game with 1.5 second breaks between iterations
-        """
-        while True:
-            self.turn()
-            sleep(1.5)
-            while not self.go:
-                pass
-
     def run_start(self):
         """
         Start the game loop
         """
-        self.go = True
+        self.game_loop = tk.Frame()
+        text_value = self.timeEntry.get()
+        if text_value == '':
+            text_value = '10'
+        self.turn()
+        self.game_loop.after(int(text_value), self.run_start)
 
     def run_stop(self):
         """
         Stop the game loop
         """
-        self.go = False
+        self.game_loop.destroy()
 
     def run(self):
         """
