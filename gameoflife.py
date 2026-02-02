@@ -1,8 +1,7 @@
-from networkx.classes import neighbors
-
+from random import randint
 def copy_two_dim(board):
     """
-    This methods copies 2D list
+    These methods copies 2D list
     :param list[list] board: the 2D list
     :return: copy of the 2D list
     """
@@ -136,3 +135,12 @@ class GameOfLife:
         for y, row in enumerate(self.board):
             for x, col in enumerate(row):
                 self.board[y][x] = False
+    def random(self, chance):
+        to_color = []
+        for y, row in enumerate(self.board):
+            for x, cell in enumerate(row):
+                choice = randint(0, 100)
+                if choice < chance:
+                    self.board[y][x] = True
+                    to_color.append((x, y))
+        return to_color

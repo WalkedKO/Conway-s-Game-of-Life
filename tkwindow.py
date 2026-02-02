@@ -23,6 +23,7 @@ class WindowWrapper:
         self.height_cells = height_cells
         self.width_cells = width_cells
 
+
         self.game = GameOfLife(self.width_cells, self.height_cells)
         self.game_loop = threading.Thread(target=self.run_game)
         self.game_loop.start()
@@ -37,15 +38,25 @@ class WindowWrapper:
         self.stopButton = tk.Button(self.buttons, text="Stop", command=self.run_stop)
         self.nextButton = tk.Button(self.buttons, text="Next", command=self.turn)
         self.resetButton = tk.Button(self.buttons, text="Reset", command=self.reset)
+        self.randomButton = tk.Button(self.buttons, text="Random", command=self.random)
 
         self.startButton.grid(row=0, column=0)
         self.stopButton.grid(row=0, column=1)
         self.nextButton.grid(row=0, column=2)
         self.resetButton.grid(row=0,column=3)
+        self.randomButton.grid(row=0,column=4)
+
+        # percent of chance of coloring a cell while randomizing
+        self.chance = 10
+        #cells objects list
+        self.cell_list = []
         # prepares the board
         for y in range(self.height_cells):
+            temp = []
             for x in range(self.width_cells):
-                self.color_cell(x, y, "black")
+                temp.append(self.create_cell(x, y, "black"))
+            self.cell_list.append(temp)
+
 
     def turn(self):
         """
@@ -86,6 +97,19 @@ class WindowWrapper:
         """
         self.root.mainloop()
 
+    def create_cell(self, x, y, color):
+        """
+        Creates a cell on the board
+        :param int x: x coordinate of the cell
+        :param int y: y coordinate of the cell
+        :param str color: color of the cell
+        :return: cell object
+        """
+        x0 = x * self.cell_size
+        x1 = (x + 1) * self.cell_size
+        y0 = y * self.cell_size
+        y1 = (y + 1) * self.cell_size
+        return self.game_map.create_rectangle(x0, y0, x1, y1, outline="white", fill=color)
     def color_cell(self, x, y, color):
         """
         Color a single cell on the board
@@ -93,11 +117,8 @@ class WindowWrapper:
         :param int y: y coordinate of the cell
         :param str color: color of the cell
         """
-        x0 = x * self.cell_size
-        x1 = (x + 1) * self.cell_size
-        y0 = y * self.cell_size
-        y1 = (y + 1) * self.cell_size
-        self.game_map.create_rectangle(x0, y0, x1, y1, outline="white", fill=color)
+        cell = self.cell_list[y][x]
+        self.game_map.itemconfig(cell, fill=color)
 
     def on_mouse_down(self, event):
         """
@@ -121,3 +142,8 @@ class WindowWrapper:
             for x in range(self.width_cells):
                 self.color_cell(x, y, "black")
 
+    def random(self):
+        self.reset()
+        to_color = self.game.random(self.chance)
+        for x, y in to_color:
+            self.color_cell(x, y, 'white')
