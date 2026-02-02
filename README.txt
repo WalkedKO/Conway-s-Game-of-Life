@@ -1,7 +1,9 @@
 Kacper Osmola UJ FAIS 2026
 Conway's Game Of Life
 
-This is an implementation of Conway's game of life, the rules of the game are simple:
+This is an implementation of Conway's game of life.
+I used Python with tkinter to implement the game.
+The rules of the game are simple:
 - there is a board of cells
 - cells can be alive or dead
 - if a dead cell has 3 alive neighbours, it will be alive in the next iteration
